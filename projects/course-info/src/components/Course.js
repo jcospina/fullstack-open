@@ -1,41 +1,46 @@
 import React from "react";
-const Header = ({courseName}) => {
-  return <h1>{courseName}</h1>;
+const Header = ({ courseName }) => {
+  return <h2>{courseName}</h2>;
 };
 
-const Part = (props) => {
+const Part = ({ part }) => {
   return (
     <>
       <p>
-        {props.part.name} {props.part.exercises}
+        {part.name} {part.exercises}
       </p>
     </>
   );
 };
 
-const Content = (props) => {
+const Content = ({ parts }) => {
   return (
     <>
-      {props.parts.map((part) => (
-        <Part part={part} />
+      {parts.map((part) => (
+        <Part key={part.id} part={part} />
       ))}
     </>
   );
 };
 
-const Footer = (props) => {
+const Footer = ({ total }) => {
   return (
     <>
-      <p>Number of exercises {props.total}</p>
+      <b>Number of exercises {total}</b>
     </>
   );
 };
 
 const Course = ({ course }) => {
+  const total = course.parts.reduce(
+    (acc, current) => acc + current.exercises,
+    0
+  );
   return (
     <>
       <Header courseName={course.name} />
       <Content parts={course.parts} />
+      <Footer total={total} />
     </>
   );
 };
