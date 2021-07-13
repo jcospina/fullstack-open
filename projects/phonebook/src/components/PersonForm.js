@@ -1,17 +1,10 @@
 import React from "react";
 
 const PersonForm = (props) => {
-  const onNameChange = (event) => {
-    event.preventDefault();
-    const nameToAdd = event.target.value;
-    if (nameToAdd !== "") {
-      props.onNameChange(nameToAdd);
-    }
-  };
   return (
     <form onSubmit={props.addNewPerson}>
       <div>
-        Name: <input value={props.newName} onChange={onNameChange} />
+        Name: <input value={props.newName} onChange={props.onNameChange} />
       </div>
       <div>
         Number:
