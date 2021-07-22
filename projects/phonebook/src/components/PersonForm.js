@@ -4,10 +4,11 @@ const PersonForm = (props) => {
   return (
     <form onSubmit={props.addNewPerson}>
       <div>
-        Name: <input value={props.newName} onChange={props.onNameChange} />
+        <label>Name: </label>
+        <input value={props.newName} onChange={props.onNameChange} />
       </div>
       <div>
-        Number:
+        <label>Number: </label>
         <input value={props.newNumber} onChange={props.onNumberChange} />
       </div>
       <div>
