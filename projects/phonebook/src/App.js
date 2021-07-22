@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import PersonList from "./components/PersonList";
+import Notification from "./components/Notification";
 import phonebookService from "./services/phonebook";
 
 const App = () => {
@@ -9,6 +10,14 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [notification, setNotification] = useState(null);
+
+  const displayNotification = (notification) => {
+    setNotification(notification);
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+  };
 
   useEffect(() => {
     phonebookService.getAll().then((persons) => setPersons(persons));
@@ -30,28 +39,59 @@ const App = () => {
       }
     }
     return phonebookService.addPerson(newPerson).then((newPerson) => {
+      displayNotification({
+        message: `Added ${newPerson.name}`,
+        type: "success",
+      });
       setPersons(persons.concat(newPerson));
       setNewName("");
       setNewNumber("");
     });
   };
   const deletePerson = (id) => {
+    const deletedPerson = persons.find((person) => person.id === id);
     if (window.confirm("Are you sure you want to delete?")) {
       phonebookService
         .deletePerson(id)
-        .then(() => setPersons(persons.filter((person) => person.id !== id)));
+        .then(() => {
+          displayNotification({
+            message: `Deleted ${deletedPerson.name}`,
+            type: "success",
+          });
+          setPersons(persons.filter((person) => person.id !== id));
+        })
+        .catch((error) =>
+          displayNotification({
+            message: `Information on ${deletedPerson.name} has already been removed from the server`,
+            type: "error",
+          })
+        );
     }
   };
 
   const updatePerson = (personToUpdate) => {
-    const id = persons.find((person) => person.name === personToUpdate.name).id;
-    phonebookService.updatePerson(id, personToUpdate).then((updatedPerson) => {
-      return setPersons(
-        persons.map((person) =>
-          person.id !== updatedPerson.id ? person : updatedPerson
-        )
+    const currentPerson = persons.find(
+      (person) => person.name === personToUpdate.name
+    );
+    phonebookService
+      .updatePerson(currentPerson.id, personToUpdate)
+      .then((updatedPerson) => {
+        displayNotification({
+          message: `Updated ${updatedPerson.name}`,
+          type: "success",
+        });
+        return setPersons(
+          persons.map((person) =>
+            person.id !== updatedPerson.id ? person : updatedPerson
+          )
+        );
+      })
+      .catch((error) =>
+        displayNotification({
+          message: `Information on ${currentPerson.name} has already been removed from the server`,
+          type: "error",
+        })
       );
-    });
   };
   const onNumberChange = (event) => setNewNumber(event.target.value);
   const onNameChange = (event) => setNewName(event.target.value);
@@ -64,6 +104,7 @@ const App = () => {
   return (
     <div>
       <h1>Phonebook</h1>
+      <Notification notification={notification}></Notification>
       <Filter searchTerm={searchTerm} onSearchChange={onSearchChange} />
       <h2>Add New</h2>
       <PersonForm
