@@ -1,0 +1,3 @@
+[submodule "projects/phonebook-be"]
+	path = projects/phonebook-be
+	url = https://github.com/jcospina/phonebook-be.git
