@@ -1,5 +1,6 @@
 const { response } = require("express");
 const express = require("express");
+const cors = require("cors");
 // Creates express app
 const app = express();
 
@@ -26,6 +27,7 @@ let notes = [
   },
 ];
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
